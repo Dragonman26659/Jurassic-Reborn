@@ -183,7 +183,6 @@ public abstract class DinosaurEntity extends EntityCreature implements IEntityAd
     public DinosaurEntity(World world) {
         super(world);
         blocked = false;
-        //Necessary to set the bounding box, rather than having NULL_BOX
         setSize(1, 1);
         this.setFullyGrown();
         this.updateAttributes();
@@ -222,21 +221,21 @@ public abstract class DinosaurEntity extends EntityCreature implements IEntityAd
 
         if (dinosaur.getDiet().canEat(this, FoodType.PLANT)) {
             this.tasks.addTask(1, new GrazeEntityAI(this));
-
         }
+
         if (dinosaur.getDiet().canEat(this, FoodType.MEAT)) {
-            if (dinosaur.isPackHunter()) {
-                this.tasks.addTask(1, new PackHuntAI<>(this));
-            }
             this.tasks.addTask(1, new TargetCarcassEntityAI(this));
         }
+
         if (dinosaur.shouldDefendOwner()) {
             this.tasks.addTask(2, new DefendOwnerEntityAI(this));
             this.tasks.addTask(2, new AssistOwnerEntityAI(this));
         }
+
         if (dinosaur.shouldFlee()) {
             this.tasks.addTask(2, new FleeEntityAI(this));
         }
+
         this.tasks.addTask(0, new EscapeWireEntityAI(this));
         this.tasks.addTask(1, new RespondToAttackEntityAI(this));
         this.tasks.addTask(1, new EntityAIPanic(this, 1.25D));
@@ -247,18 +246,20 @@ public abstract class DinosaurEntity extends EntityCreature implements IEntityAd
         this.tasks.addTask(3, this.getAttackAI());
         this.tasks.addTask(4, new EntityAILookIdle(this));
         this.tasks.addTask(4, new EntityAIWatchClosest(this, EntityLivingBase.class, 6.0F));
+
         this.animationTasks.addTask(0, new SleepEntityAI(this));
         this.animationTasks.addTask(1, new DrinkEntityAI(this));
         this.animationTasks.addTask(1, new MateEntityAI(this));
         this.animationTasks.addTask(1, new EatFoodItemEntityAI(this));
         this.animationTasks.addTask(1, new FeederEntityAI(this));
-        if (!dinosaur.isPackHunter()) {
-            this.animationTasks.addTask(3, new CallAnimationAI(this));
-        }
+
+        this.animationTasks.addTask(3, new CallAnimationAI(this));
         this.animationTasks.addTask(3, new RoarAnimationAI(this));
+
         this.animationTasks.addTask(3, new LookAnimationAI(this));
         this.animationTasks.addTask(3, new HeadCockAnimationAI(this));
-        if (world.isRemote) {
+
+        if(world.isRemote) {
             this.initClient();
         }
 
@@ -2054,7 +2055,12 @@ public abstract class DinosaurEntity extends EntityCreature implements IEntityAd
     }
 
     public EntityAIBase getAttackAI() {
-        return new DinosaurAttackMeleeEntityAI(this, this.dinosaur.getAttackSpeed(), false);
+        if (dinosaur.isPackHunter()) {
+            return new PackHuntAI<>(this);
+        }
+        else {
+            return new DinosaurAttackMeleeEntityAI(this, this.dinosaur.getAttackSpeed(), false);
+        }
     }
 
     public List<Class<? extends EntityLivingBase>> getAttackTargets() {
@@ -2313,6 +2319,30 @@ public abstract class DinosaurEntity extends EntityCreature implements IEntityAd
             buf.writeBoolean(info.thirsty);
             buf.writeBoolean(info.poisoned);
             return info;
+        }
+    }
+
+    public void hearHuntCall(DinosaurEntity caller) {
+        if (this.world.isRemote) {
+            // Client-side handling
+            this.setAnimation(EntityAnimation.HEAD_COCKING.get());
+        } else {
+            // Server-side handling
+            if (this.getAttackTarget() == null &&
+                    this.getMetabolism().isHungry() &&
+                    this.getAgePercentage() > 75) {
+
+                // Check if we're within hearing range
+                if (this.getDistance(caller) <= caller.getDinosaur().getPackCallRadius()) {
+                    this.setAttackTarget(caller.getAttackTarget());
+
+                    // Start moving towards the target
+                    this.getNavigator().tryMoveToEntityLiving(
+                            caller.getAttackTarget(),
+                            1.0D
+                    );
+                }
+            }
         }
     }
 

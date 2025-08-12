@@ -51,7 +51,7 @@ public class SpinoraptorDinosaur extends Dinosaur implements Hybrid
         this.setRecipe(recipe);
         this.enableSkeleton();
         this.setPackHunter();
-        this.setPackCallRadius(200);
+        this.setPackCallRadius(400);
     }
 
     @Override
