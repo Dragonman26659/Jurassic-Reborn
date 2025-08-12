@@ -33,7 +33,7 @@ public class PackHuntAI<T extends DinosaurEntity> extends EntityAIBase {
     @Override
     public boolean shouldExecute() {
         // Dont hunt unless hungry
-        if (!this.entity.getMetabolism().isHungry()) {
+        if (!this.dinosaur.getMetabolism().isHungry()) {
             return false;
         }
 
