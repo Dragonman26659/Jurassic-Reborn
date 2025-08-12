@@ -225,6 +225,9 @@ public abstract class DinosaurEntity extends EntityCreature implements IEntityAd
 
         }
         if (dinosaur.getDiet().canEat(this, FoodType.MEAT)) {
+            if (dinosaur.isPackHunter()) {
+                this.tasks.addTask(1, new PackHuntAI<>(this));
+            }
             this.tasks.addTask(1, new TargetCarcassEntityAI(this));
         }
         if (dinosaur.shouldDefendOwner()) {
@@ -249,7 +252,9 @@ public abstract class DinosaurEntity extends EntityCreature implements IEntityAd
         this.animationTasks.addTask(1, new MateEntityAI(this));
         this.animationTasks.addTask(1, new EatFoodItemEntityAI(this));
         this.animationTasks.addTask(1, new FeederEntityAI(this));
-        this.animationTasks.addTask(3, new CallAnimationAI(this));
+        if (!dinosaur.isPackHunter()) {
+            this.animationTasks.addTask(3, new CallAnimationAI(this));
+        }
         this.animationTasks.addTask(3, new RoarAnimationAI(this));
         this.animationTasks.addTask(3, new LookAnimationAI(this));
         this.animationTasks.addTask(3, new HeadCockAnimationAI(this));

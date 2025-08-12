@@ -1,6 +1,7 @@
 package mod.reborn.server.dinosaur;
 
 
+import mod.reborn.server.entity.AmfibianDinosaurEntity;
 import mod.reborn.server.entity.Diet;
 import mod.reborn.server.entity.dinosaur.SpinosaurusEntity;
 import mod.reborn.server.period.TimePeriod;

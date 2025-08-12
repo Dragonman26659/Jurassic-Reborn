@@ -56,6 +56,11 @@ public abstract class Dinosaur implements Comparable<Dinosaur> {
     private int storage;
     private int overlayCount;
     private Diet diet;
+
+    private boolean PackHunter = false;
+
+    private int PackCallRadius = 20;
+
     private SleepTime sleepTime = SleepTime.DIURNAL;
     private String[] bones;
     private int maximumAge;
@@ -489,6 +494,15 @@ public abstract class Dinosaur implements Comparable<Dinosaur> {
         this.isHybrid = true;
     }
 
+    public boolean isPackHunter() { return this.PackHunter; }
+
+    public void setPackHunter() {
+        this.PackHunter = true;
+    }
+
+    public int getPackCallRadius() {return this.PackCallRadius; }
+
+    public void setPackCallRadius(int radius) { this.PackCallRadius = radius; };
 
     public int getLipids() {
         return 1500;

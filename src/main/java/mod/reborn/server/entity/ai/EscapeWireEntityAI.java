@@ -39,6 +39,12 @@ public class EscapeWireEntityAI extends EntityAIBase {
                     if (this.entity.world.getBlockState(p).getBlock() == BlockHandler.LOW_SECURITY_FENCE_WIRE) {
                         continue search;
                     }
+                    if (this.entity.world.getBlockState(p).getBlock() == BlockHandler.MED_SECURITY_FENCE_WIRE) {
+                        continue search;
+                    }
+                    if (this.entity.world.getBlockState(p).getBlock() == BlockHandler.HIGH_SECURITY_FENCE_WIRE) {
+                        continue search;
+                    }
                 }
                 this.entity.getNavigator().tryMoveToXYZ(surface.getX(), surface.getY(), surface.getZ(), 1.4);
             }

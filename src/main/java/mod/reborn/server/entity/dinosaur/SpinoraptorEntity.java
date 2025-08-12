@@ -3,6 +3,8 @@ package mod.reborn.server.entity.dinosaur;
 import mod.reborn.RebornMod;
 import mod.reborn.client.model.animation.EntityAnimation;
 import mod.reborn.client.sound.SoundHandler;
+import mod.reborn.server.dinosaur.Dinosaur;
+import mod.reborn.server.entity.AmfibianDinosaurEntity;
 import mod.reborn.server.entity.DinosaurEntity;
 import mod.reborn.server.entity.ai.LeapingMeleeEntityAI;
 import mod.reborn.server.entity.ai.RaptorLeapEntityAI;

@@ -47,6 +47,8 @@ public class VelociraptorDinosaur extends Dinosaur {
                 {"", "leg_bones", "arm_bones", "tooth"},
                 {"", "foot_bones", "claw", ""}};
         this.setRecipe(recipe);
+        this.setPackHunter();
+        this.setPackCallRadius(60);
 
         
         ArrayList<Biome> biomeList = new ArrayList<Biome>();
