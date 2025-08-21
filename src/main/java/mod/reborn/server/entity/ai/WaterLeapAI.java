@@ -65,7 +65,7 @@ public class WaterLeapAI extends EntityAIBase {
         if (this.animation == EntityAnimation.PREPARE_LEAP && tick < this.prevTick) {
             // Start the leap animation and set motion
             this.entity.setAnimation(EntityAnimation.LEAP.get());
-            this.entity.playSound(this.entity.getSoundForAnimation(EntityAnimation.LEAP.get()), this.entity.getSoundVolume(), this.entity.getSoundPitch());
+            this.entity.EmmitSound(EntityAnimation.LEAP);
             this.entity.motionY = this.jumpheight;
         } else if (this.animation == EntityAnimation.LEAP && this.entity.motionY < 0) {
             // Transition to landing animation

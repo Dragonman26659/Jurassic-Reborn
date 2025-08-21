@@ -43,7 +43,7 @@ public class DinosaurJumpHelper extends EntityJumpHelper {
     @Override
     public void doJump() {
         if (!this.sounded && this.jumpHeight > 1 && this.entity.getAnimation() == EntityAnimation.LEAP.get()) {
-            this.entity.playSound(this.entity.getSoundForAnimation(EntityAnimation.ATTACKING.get()), this.entity.getSoundVolume(), this.entity.getSoundPitch());
+            this.entity.EmmitSound(EntityAnimation.ATTACKING);
             this.sounded = true;
         }
         if (this.isJumping && (this.jumpHeight <= 1 || this.entity.getAnimation() == EntityAnimation.LEAP.get())) {

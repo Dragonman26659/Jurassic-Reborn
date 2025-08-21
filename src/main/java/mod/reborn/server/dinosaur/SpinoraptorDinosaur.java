@@ -50,8 +50,6 @@ public class SpinoraptorDinosaur extends Dinosaur implements Hybrid
                 {"", "", "foot_bones", "", ""}};
         this.setRecipe(recipe);
         this.enableSkeleton();
-        this.setPackHunter();
-        this.setPackCallRadius(400);
     }
 
     @Override

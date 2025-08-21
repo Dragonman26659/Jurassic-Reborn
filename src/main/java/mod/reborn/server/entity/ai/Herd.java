@@ -37,6 +37,8 @@ public class Herd implements Iterable<DinosaurEntity> {
 
     public boolean fleeing;
 
+    public boolean hunting;
+
     private Dinosaur herdType;
 
     private int nextMemberCheck;

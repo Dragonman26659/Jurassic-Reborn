@@ -23,7 +23,7 @@ public class RoarAnimationAI extends EntityAIBase {
     @Override
     public void startExecuting() {
         this.dinosaur.setAnimation(EntityAnimation.ROARING.get());
-        this.dinosaur.playSound(this.dinosaur.getSoundForAnimation(EntityAnimation.ROARING.get()), this.dinosaur.getSoundVolume() > 0.0F ? this.dinosaur.getSoundVolume() + 1.25F : 0.0F, this.dinosaur.getSoundPitch());
+        this.dinosaur.EmmitSound(EntityAnimation.ROARING);
     }
 
     @Override

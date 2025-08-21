@@ -3,7 +3,9 @@ package mod.reborn.server.entity.ai;
 import mod.reborn.client.model.animation.EntityAnimation;
 import mod.reborn.server.entity.DinosaurEntity;
 import mod.reborn.server.entity.ai.Mutex;
+import mod.reborn.server.entity.ai.hearing.SoundEventInfo;
 import net.ilexiconn.llibrary.server.animation.IAnimatedEntity;
+import net.minecraft.client.audio.Sound;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -47,9 +49,34 @@ public class PackHuntAI<T extends DinosaurEntity> extends EntityAIBase {
             return false;
         }
 
-        this.target = this.dinosaur.getAttackTarget();
+        // Check for threatening sounds from pack members
+        List<SoundEventInfo> recentSounds = this.dinosaur.listener.getRecentSounds();
+        for (SoundEventInfo sound : recentSounds) {
+            if (sound.getSoundType().equals(EntityAnimation.CALLING)) {
+                DinosaurEntity sender = sound.getSender();
+                if (sender != null && sender.herd != null &&
+                        (sender.herd == this.dinosaur.herd ||
+                                this.dinosaur.herd != null && this.dinosaur.herd.enemies.containsAll(sender.herd.enemies))) {
+                    this.target = sender.getAttackTarget();
+                    if (this.target != null) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        // Check for nearby threats to pack members
+        if (this.dinosaur.herd != null) {
+            for (DinosaurEntity member : this.dinosaur.herd) {
+                if (member != this.dinosaur && member.getAttackTarget() != null) {
+                    this.target = member.getAttackTarget();
+                    return true;
+                }
+            }
+        }
+
+        // Find new target if none exists
         if (this.target == null) {
-            // Check for potential prey in range
             this.target = this.findPotentialPrey();
             if (this.target == null) {
                 this.currentState = HuntState.IDLE;
@@ -92,78 +119,6 @@ public class PackHuntAI<T extends DinosaurEntity> extends EntityAIBase {
         return this.dinosaur.getDistance(this.target) <= HUNT_RANGE;
     }
 
-    private void playHuntCall() {
-        this.dinosaur.setAnimation(EntityAnimation.CALLING.get());
-
-        // Play sound for nearby dinosaurs
-        List<Entity> entities = this.dinosaur.world.getEntitiesWithinAABBExcludingEntity(
-                this.dinosaur,
-                new AxisAlignedBB(
-                        this.dinosaur.posX - COORDINATION_RANGE,
-                        this.dinosaur.posY - COORDINATION_RANGE,
-                        this.dinosaur.posZ - COORDINATION_RANGE,
-                        this.dinosaur.posX + COORDINATION_RANGE,
-                        this.dinosaur.posY + COORDINATION_RANGE,
-                        this.dinosaur.posZ + COORDINATION_RANGE
-                )
-        );
-
-        for (Entity entity : entities) {
-            if (entity instanceof DinosaurEntity) {
-                DinosaurEntity otherDino = (DinosaurEntity) entity;
-                if (otherDino != this.dinosaur) {
-                    otherDino.hearHuntCall(this.dinosaur);
-                }
-            }
-            if (this.dinosaur.getClass().isInstance(entity)) {
-                this.dinosaur.playSound(this.dinosaur.getSoundForAnimation(EntityAnimation.CALLING.get()), this.dinosaur.getSoundVolume() > 0.0F ? this.dinosaur.getSoundVolume() + 1.25F : 0.0F, this.dinosaur.getSoundPitch());
-            }
-        }
-    }
-
-    @Override
-    public void startExecuting() {
-        this.currentState = HuntState.STALKING;
-        this.playHuntCall();
-        this.packMembers = this.getNearbyPackMembers();
-
-        // Coordinate with pack members
-        for (DinosaurEntity member : this.packMembers) {
-            if (member != this.dinosaur && member.getAttackTarget() == null) {
-                member.setAttackTarget(this.target);
-                member.getNavigator().tryMoveToEntityLiving(this.target, 1.0D);
-            }
-        }
-        this.dinosaur.getNavigator().tryMoveToEntityLiving(this.target, 1.0D);
-    }
-
-    @Override
-    public void updateTask() {
-        System.out.println("[" + this.dinosaur.getName() + "] Current state: " + this.currentState);
-        switch (this.currentState) {
-            case STALKING:
-                if (this.isWithinHuntRange()) {
-                    this.currentState = HuntState.COORDINATING;
-                    this.coordinatePackAttack();
-                }
-                break;
-
-            case COORDINATING:
-                if (this.isPackReadyToAttack()) {
-                    this.currentState = HuntState.ATTACKING;
-                    this.executePackAttack();
-                }
-                break;
-
-            case ATTACKING:
-                if (!this.target.isEntityAlive()) {
-                    this.currentState = HuntState.IDLE;
-                    this.resetTask();
-                }
-                break;
-        }
-    }
-
     private void coordinatePackAttack() {
         // Position pack members around target
         this.packMembers.forEach(member -> {
@@ -188,7 +143,6 @@ public class PackHuntAI<T extends DinosaurEntity> extends EntityAIBase {
             }
         });
     }
-
 
     private boolean isPackReadyToAttack() {
         // Check if we've exceeded the timeout

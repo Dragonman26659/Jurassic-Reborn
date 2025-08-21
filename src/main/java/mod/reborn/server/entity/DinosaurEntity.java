@@ -18,6 +18,8 @@ import mod.reborn.server.entity.ai.animations.CallAnimationAI;
 import mod.reborn.server.entity.ai.animations.HeadCockAnimationAI;
 import mod.reborn.server.entity.ai.animations.LookAnimationAI;
 import mod.reborn.server.entity.ai.animations.RoarAnimationAI;
+import mod.reborn.server.entity.ai.hearing.DinosaurEmmitter;
+import mod.reborn.server.entity.ai.hearing.DinosaurListener;
 import mod.reborn.server.entity.ai.metabolism.DrinkEntityAI;
 import mod.reborn.server.entity.ai.metabolism.EatFoodItemEntityAI;
 import mod.reborn.server.entity.ai.metabolism.FeederEntityAI;
@@ -140,6 +142,17 @@ public abstract class DinosaurEntity extends EntityCreature implements IEntityAd
     public Family family;
     public Set<Relationship> relationships = new HashSet<>();
 
+
+    // Sounds
+    public DinosaurEmmitter emmitter;
+    public DinosaurListener listener;
+
+
+
+
+
+
+
     public int wireTicks;
     public int disableHerdingTicks;
 
@@ -188,6 +201,12 @@ public abstract class DinosaurEntity extends EntityCreature implements IEntityAd
         this.updateAttributes();
         this.moveHelper = new DinosaurMoveHelper(this);
         this.jumpHelper = new DinosaurJumpHelper(this);
+
+        // set sound managers
+        this.emmitter = new DinosaurEmmitter(this);
+        this.listener = new DinosaurListener(this);
+
+
 
         this.setPathPriority(PathNodeType.FENCE, -1);
         this.setPathPriority(PathNodeType.DOOR_WOOD_CLOSED, -1);
@@ -280,6 +299,9 @@ public abstract class DinosaurEntity extends EntityCreature implements IEntityAd
     }
 
 
+    public void EmmitSound(EntityAnimation animation) {
+        this.emmitter.EmmitSound(animation);
+    }
 
     private void eatEggs() {
         for (Entity egg : world.loadedEntityList)
@@ -463,7 +485,7 @@ public abstract class DinosaurEntity extends EntityCreature implements IEntityAd
         if (!this.isCarcass()) {
             if (this.getHealth() - amount <= 0.0F) {
                 if (!canHarmInCreative) {
-                    this.playSound(this.getSoundForAnimation(EntityAnimation.DYING.get()), this.getSoundVolume(), this.getSoundPitch());
+                    this.EmmitSound(EntityAnimation.DYING);
                     this.setHealth(this.getMaxHealth());
                     this.setCarcass(true);
                     return true;
@@ -1180,7 +1202,7 @@ public abstract class DinosaurEntity extends EntityCreature implements IEntityAd
         }
         if(this.ticksUntilDeath > 0) {
             if(--this.ticksUntilDeath == 0) {
-                this.playSound(this.getSoundForAnimation(EntityAnimation.DYING.get()), this.getSoundVolume(), this.getSoundPitch());
+                this.EmmitSound(EntityAnimation.DYING);
                 this.setHealth(this.getMaxHealth());
                 this.setCarcass(true);
             }
@@ -2055,12 +2077,7 @@ public abstract class DinosaurEntity extends EntityCreature implements IEntityAd
     }
 
     public EntityAIBase getAttackAI() {
-        if (dinosaur.isPackHunter()) {
-            return new PackHuntAI<>(this);
-        }
-        else {
             return new DinosaurAttackMeleeEntityAI(this, this.dinosaur.getAttackSpeed(), false);
-        }
     }
 
     public List<Class<? extends EntityLivingBase>> getAttackTargets() {
@@ -2319,30 +2336,6 @@ public abstract class DinosaurEntity extends EntityCreature implements IEntityAd
             buf.writeBoolean(info.thirsty);
             buf.writeBoolean(info.poisoned);
             return info;
-        }
-    }
-
-    public void hearHuntCall(DinosaurEntity caller) {
-        if (this.world.isRemote) {
-            // Client-side handling
-            this.setAnimation(EntityAnimation.HEAD_COCKING.get());
-        } else {
-            // Server-side handling
-            if (this.getAttackTarget() == null &&
-                    this.getMetabolism().isHungry() &&
-                    this.getAgePercentage() > 75) {
-
-                // Check if we're within hearing range
-                if (this.getDistance(caller) <= caller.getDinosaur().getPackCallRadius()) {
-                    this.setAttackTarget(caller.getAttackTarget());
-
-                    // Start moving towards the target
-                    this.getNavigator().tryMoveToEntityLiving(
-                            caller.getAttackTarget(),
-                            1.0D
-                    );
-                }
-            }
         }
     }
 

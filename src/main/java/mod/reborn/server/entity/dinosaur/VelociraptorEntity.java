@@ -3,6 +3,7 @@ package mod.reborn.server.entity.dinosaur;
 import mod.reborn.client.model.animation.EntityAnimation;
 import mod.reborn.client.sound.SoundHandler;
 import mod.reborn.server.entity.DinosaurEntity;
+import mod.reborn.server.entity.ai.PackHuntAI;
 import mod.reborn.server.entity.animal.GoatEntity;
 import mod.reborn.server.entity.ai.LeapingMeleeEntityAI;
 import mod.reborn.server.entity.ai.RaptorLeapEntityAI;
@@ -35,6 +36,7 @@ public class VelociraptorEntity extends DinosaurEntity {
             this.targetTasks.addTask(0, new EntityAINearestAttackableTarget<EntityLivingBase>(this, entity, true));
         }
         this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, EntityPlayer.class, RaphusrexEntity.class, TyrannosaurusEntity.class, GiganotosaurusEntity.class, SpinosaurusEntity.class, IndominusEntity.class));
+        this.tasks.addTask(1, new PackHuntAI(this));
     }
 
     @Override

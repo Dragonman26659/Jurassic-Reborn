@@ -7,6 +7,7 @@ import mod.reborn.server.dinosaur.Dinosaur;
 import mod.reborn.server.entity.AmfibianDinosaurEntity;
 import mod.reborn.server.entity.DinosaurEntity;
 import mod.reborn.server.entity.ai.LeapingMeleeEntityAI;
+import mod.reborn.server.entity.ai.PackHuntAI;
 import mod.reborn.server.entity.ai.RaptorLeapEntityAI;
 import mod.reborn.server.entity.animal.GoatEntity;
 import net.ilexiconn.llibrary.server.animation.Animation;
@@ -43,6 +44,8 @@ public class SpinoraptorEntity extends DinosaurEntity {
             this.tasks.addTask(0, new EntityAINearestAttackableTarget<EntityLivingBase>(this, entity, true, false));
             this.targetTasks.addTask(0, new EntityAINearestAttackableTarget<EntityLivingBase>(this, entity, true));
         }
+
+        this.tasks.addTask(1, new PackHuntAI(this));
         this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, EntityPlayer.class, TyrannosaurusEntity.class, GiganotosaurusEntity.class, SpinosaurusEntity.class));
     }
 

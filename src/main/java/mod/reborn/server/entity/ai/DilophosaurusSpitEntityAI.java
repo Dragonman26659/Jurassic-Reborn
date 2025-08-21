@@ -86,7 +86,7 @@ public class DilophosaurusSpitEntityAI extends EntityAIBase {
             if (distance > (double) this.maxAttackDistance || !canSee) {
                 return;
             }
-            this.dilophosaurus.playSound(SoundHandler.DILOPHOSAURUS_SPIT, this.dilophosaurus.getSoundVolume(), this.dilophosaurus.getSoundPitch());
+            this.dilophosaurus.EmmitSound(EntityAnimation.DILOPHOSAURUS_SPIT);
             this.dilophosaurus.setAnimation(EntityAnimation.DILOPHOSAURUS_SPIT.get());
             this.animationTimer = 20;
         } else if (this.rangedAttackTime < 0) {

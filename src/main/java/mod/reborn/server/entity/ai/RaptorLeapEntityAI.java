@@ -60,7 +60,7 @@ public class RaptorLeapEntityAI extends EntityAIBase {
         if (this.animation == EntityAnimation.PREPARE_LEAP && tick < this.prevTick) {
             this.animation = EntityAnimation.LEAP;
 
-            this.entity.playSound(this.entity.getSoundForAnimation(EntityAnimation.ATTACKING.get()), this.entity.getSoundVolume(), this.entity.getSoundPitch());
+            this.entity.EmmitSound(EntityAnimation.ATTACKING);
 
             double targetSpeedX = this.target.posX - (!this.ticked ? this.target.prevPosX : this.targetPrevPosX);
             double targetSpeedZ = this.target.posZ - (!this.ticked ? this.target.prevPosZ : this.targetPrevPosZ);
