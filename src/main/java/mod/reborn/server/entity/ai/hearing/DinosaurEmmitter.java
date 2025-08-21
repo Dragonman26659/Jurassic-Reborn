@@ -45,7 +45,7 @@ public class DinosaurEmmitter {
         }
 
         // Notify nearby listeners within 150 blocks
-        List<Entity> entities = this.getEntitiesWithinDistance(this.emmitter, 150, 150);
+        List<Entity> entities = this.getEntitiesWithinDistance(this.emmitter, 20, 20);
 
         for (Entity entity : entities) {
             if (entity instanceof DinosaurEntity) {

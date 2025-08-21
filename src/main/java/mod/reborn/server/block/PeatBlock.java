@@ -1,6 +1,5 @@
 package mod.reborn.server.block;
 
-import javafx.util.Pair;
 import mod.reborn.server.conf.RebornConfig;
 import mod.reborn.server.tab.TabHandler;
 import net.minecraft.block.Block;

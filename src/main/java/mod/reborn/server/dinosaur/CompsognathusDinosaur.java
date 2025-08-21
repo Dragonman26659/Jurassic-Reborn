@@ -45,8 +45,6 @@ public class CompsognathusDinosaur extends Dinosaur
                 {"leg_bones", "leg_bones", "", "", "arm_bones"}};
         this.setRecipe(recipe);
         this.enableSkeleton();
-        this.setPackHunter();
-        this.setPackCallRadius(30);
         ArrayList<Biome> biomeList = new ArrayList<Biome>();
         biomeList.addAll(BiomeDictionary.getBiomes(BiomeDictionary.Type.SAVANNA));
         biomeList.addAll(BiomeDictionary.getBiomes(BiomeDictionary.Type.SANDY));

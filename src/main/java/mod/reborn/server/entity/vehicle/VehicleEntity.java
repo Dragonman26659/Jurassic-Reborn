@@ -41,7 +41,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.omg.CORBA.DoubleHolder;
+//import org.omg.CORBA.DoubleHolder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -674,11 +674,14 @@ public abstract class VehicleEntity extends Entity implements MultiSeatedEntity 
             if (aabbList.isEmpty()) {
                 ret = pos.getY() + 1;
             }
-            DoubleHolder holder = new DoubleHolder(Integer.MIN_VALUE);
-            aabbList.forEach(aabb -> holder.value = Math.max(aabb.maxY, holder.value));
-            if (holder.value > ret) {
-                ret = holder.value;
+            double maxVal = aabbList.stream()
+                    .mapToDouble(aabb -> aabb.maxY)
+                    .max()
+                    .orElse(Integer.MIN_VALUE);
+            if (maxVal > ret) {
+                ret = maxVal;
             }
+
         }
         return ret;
     }

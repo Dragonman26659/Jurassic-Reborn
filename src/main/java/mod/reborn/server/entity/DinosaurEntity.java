@@ -14,10 +14,7 @@ import mod.reborn.server.conf.RebornConfig;
 import mod.reborn.server.damage.DinosaurDamageSource;
 import mod.reborn.server.dinosaur.Dinosaur;
 import mod.reborn.server.entity.ai.*;
-import mod.reborn.server.entity.ai.animations.CallAnimationAI;
-import mod.reborn.server.entity.ai.animations.HeadCockAnimationAI;
-import mod.reborn.server.entity.ai.animations.LookAnimationAI;
-import mod.reborn.server.entity.ai.animations.RoarAnimationAI;
+import mod.reborn.server.entity.ai.animations.*;
 import mod.reborn.server.entity.ai.hearing.DinosaurEmmitter;
 import mod.reborn.server.entity.ai.hearing.DinosaurListener;
 import mod.reborn.server.entity.ai.metabolism.DrinkEntityAI;
@@ -191,7 +188,6 @@ public abstract class DinosaurEntity extends EntityCreature implements IEntityAd
 
     private int moveTicks = -5;
 
-    private int messageTick = 0;
 
     public DinosaurEntity(World world) {
         super(world);
@@ -255,6 +251,7 @@ public abstract class DinosaurEntity extends EntityCreature implements IEntityAd
             this.tasks.addTask(2, new FleeEntityAI(this));
         }
 
+
         this.tasks.addTask(0, new EscapeWireEntityAI(this));
         this.tasks.addTask(1, new RespondToAttackEntityAI(this));
         this.tasks.addTask(1, new EntityAIPanic(this, 1.25D));
@@ -265,6 +262,7 @@ public abstract class DinosaurEntity extends EntityCreature implements IEntityAd
         this.tasks.addTask(3, this.getAttackAI());
         this.tasks.addTask(4, new EntityAILookIdle(this));
         this.tasks.addTask(4, new EntityAIWatchClosest(this, EntityLivingBase.class, 6.0F));
+        this.tasks.addTask(4, new DominanceAI(this));
 
         this.animationTasks.addTask(0, new SleepEntityAI(this));
         this.animationTasks.addTask(1, new DrinkEntityAI(this));
@@ -273,6 +271,7 @@ public abstract class DinosaurEntity extends EntityCreature implements IEntityAd
         this.animationTasks.addTask(1, new FeederEntityAI(this));
 
         this.animationTasks.addTask(3, new CallAnimationAI(this));
+        this.animationTasks.addTask(3, new RespondEntityAi(this));
         this.animationTasks.addTask(3, new RoarAnimationAI(this));
 
         this.animationTasks.addTask(3, new LookAnimationAI(this));

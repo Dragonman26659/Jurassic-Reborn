@@ -236,7 +236,7 @@ public class Herd implements Iterable<DinosaurEntity> {
         }
     }
 
-    private void splitHerd(DinosaurEntity entity) {
+    public void splitHerd(DinosaurEntity entity) {
         this.members.remove(entity);
 
         Herd newHerd = new Herd(entity);
