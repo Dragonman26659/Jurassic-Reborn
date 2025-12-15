@@ -328,9 +328,9 @@ public class EntityHandler {
             if (canSpawn && RebornConfig.ENTITIES.naturalSpawning) {
                 if (dinosaur.getSpawnBiomes() != null) {
                     int spawnChance = dinosaur.getSpawnChance();
-                    int maxHerdSize = dinosaur.getMaxHerdSize();
+                    int maxHerdSize = 2;
                     int minHerdSize = 1;
-                    int groupSize = Math.min(minHerdSize, maxHerdSize / 2);
+                    int groupSize = Math.min(minHerdSize, maxHerdSize);
 
                     EnumCreatureType creatureType = dinosaur.isMarineCreature() ? EnumCreatureType.WATER_CREATURE : EnumCreatureType.CREATURE;
                     EntityRegistry.addSpawn(clazz, spawnChance, minHerdSize, groupSize, creatureType, dinosaur.getSpawnBiomes());
