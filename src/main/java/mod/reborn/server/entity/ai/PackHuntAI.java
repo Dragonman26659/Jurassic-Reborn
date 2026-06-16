@@ -182,7 +182,7 @@ public class PackHuntAI<T extends DinosaurEntity> extends EntityAIBase {
     }
 
     public List<DinosaurEntity> getNearbyPackMembers() {
-        return this.getEntitiesWithinDistance(this.dinosaur, 8, 8).stream()
+        return this.getEntitiesWithinDistance(this.dinosaur, 20, 20).stream()
                 .filter(entity -> entity instanceof DinosaurEntity)
                 .map(entity -> (DinosaurEntity) entity)
                 .filter(member -> member.getClass().equals(this.dinosaur.getClass()))
